@@ -293,7 +293,6 @@ def main():
         pprint.pprint(generate_token(cognito_client, args, uid))
     elif args.action == ActionEnum.GENERATE_TOKEN.value:
         # generate token for a user
-        LOGGER.info(f"Generating token(s) for user: {username}")
         print("Auth Token: ")
         pprint.pprint(generate_token(cognito_client, args, uid))
     
