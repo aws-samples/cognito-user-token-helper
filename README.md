@@ -39,8 +39,8 @@ This is how you can view the command line options for the script
 
 ```
 python cognito-user-token-helper.py --help
-usage: cognito-user-token-helper.py [-h] -a {create-new-user,create-user,full-flow,generate-token,confirm-user} [-u USERNAME] [-e USER_EMAIL] -uid USER_POOL_ID [-c CLIENT_ID]
-                                    [-p AWS_PROFILE] [-v]
+usage: cognito-user-token-helper.py [-h] -a {create-new-user,create-user,full-flow,generate-token,confirm-user} [-u USERNAME] [-em USER_EMAIL] [-e] -uid USER_POOL_ID [-c CLIENT_ID]
+                                    [-p AWS_PROFILE] [-t {IdToken,AccessToken,RefreshToken,all}] [-v]
 
 cognito-user-token-helper
 
