@@ -2,6 +2,7 @@ import argparse
 from enum import Enum
 import getpass
 import logging
+import os
 import pprint
 import re
 import time
@@ -16,6 +17,10 @@ LOGGING_FORMAT = "%(asctime)s %(levelname)-5.5s " \
                  "%(message)s"
 
 EMAIL_ADDRESS_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+
+AWS_ACCESS_KEY_ID = "AWS_ACCESS_KEY_ID"
+AWS_SECRET_ACCESS_KEY = "AWS_SECRET_ACCESS_KEY"
+AWS_SESSION_TOKEN = "AWS_SESSION_TOKEN"
 
 
 class ActionEnum(Enum):
@@ -83,10 +88,14 @@ def _cli_args():
                         "--username",
                         type=str,
                         help="Username")
-    parser.add_argument("-e",
+    parser.add_argument("-em",
                         "--user-email",
                         type=str,
                         help="Email for the user")
+    parser.add_argument("-e",
+                        "--env",
+                        action="store_true",
+                        help="Use environment variables for AWS credentials")
     parser.add_argument("-uid",
                         "--user-pool-id",
                         type=str,
@@ -266,8 +275,21 @@ def main():
     # silence chatty libraries
     _silence_noisy_loggers()
 
-    LOGGER.info(f"AWS Profile being used: {args.aws_profile}")
-    boto3.setup_default_session(profile_name=args.aws_profile)
+    if args.env:
+        LOGGER.info(
+            "Attempting to fetch AWS credentials via environment variables")
+        aws_access_key_id = os.environ.get(AWS_ACCESS_KEY_ID)
+        aws_secret_access_key = os.environ.get(AWS_SECRET_ACCESS_KEY)
+        aws_session_token = os.environ.get(AWS_SESSION_TOKEN)
+        if not aws_secret_access_key or not aws_access_key_id or not aws_session_token:
+            raise Exception(
+                f"Missing one or more environment variables - " 
+                f"'{AWS_ACCESS_KEY_ID}', '{AWS_SECRET_ACCESS_KEY}', "
+                f"'{AWS_SESSION_TOKEN}'"
+            )
+    else:
+        LOGGER.info(f"AWS Profile being used: {args.aws_profile}")
+        boto3.setup_default_session(profile_name=args.aws_profile)
 
     # this is required for all operations
     uid = args.user_pool_id

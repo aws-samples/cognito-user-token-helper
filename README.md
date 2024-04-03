@@ -50,14 +50,17 @@ options:
                         What action to take
   -u USERNAME, --username USERNAME
                         Username
-  -e USER_EMAIL, --user-email USER_EMAIL
+  -em USER_EMAIL, --user-email USER_EMAIL
                         Email for the user
+  -e, --env             Use environment variables for AWS credentials
   -uid USER_POOL_ID, --user-pool-id USER_POOL_ID
                         Cognito user pool ID
   -c CLIENT_ID, --client-id CLIENT_ID
                         Application Client ID
   -p AWS_PROFILE, --aws-profile AWS_PROFILE
                         AWS profile to be used for the API calls
+  -t {IdToken,AccessToken,RefreshToken,all}, --token-type {IdToken,AccessToken,RefreshToken,all}
+                        Which token type to spit out
   -v, --verbose         debug log output
 ```
 
@@ -68,7 +71,9 @@ The comand below creates a new user in a Cognito user pool, and confirms that us
 
 NOTE: this step only needs to be done once per user. 
 
-Also, you can specify the `--aws-profile` option if you're using a profile different than the default profile.
+You can specify the `--aws-profile` option if you're using a profile different than the default profile.
+
+The script also supports authentication via environment variables like "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY" and "AWS_SESSION_TOKEN". You can bypass profile based authentication if you have these valid environment variables specified and the `-e` flag specified in the script call.
 
 ```
 python cognito-user-token-helper.py -a create-new-user \
@@ -89,8 +94,9 @@ The command below generates a token for a user
 
 NOTE: You need to specify the `--client-id` for this to work. 
 
-Also, you can specify the `--aws-profile` option if you're using a profile different than the default profile.
+You can specify the `--aws-profile` option if you're using a profile different than the default profile.
 
+The script also supports authentication via environment variables like "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY" and "AWS_SESSION_TOKEN". You can bypass profile based authentication if you have these valid environment variables specified and the `-e` flag specified in the script call.
 ```
 python cognito-user-token-helper.py -a generate-token \
                                     --user-pool-id <COGNITO_ USER_POOL_ID> \
