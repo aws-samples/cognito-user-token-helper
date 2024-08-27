@@ -119,6 +119,10 @@ def _cli_args():
                         "--verbose",
                         action="store_true",
                         help="debug log output")
+    parser.add_argument("-ca",
+                        "--client-auth",
+                        action="store_true",
+                        help="use client auth instead of server auth")
     return parser.parse_args()
 
 
@@ -225,16 +229,30 @@ def generate_token(client, args, uid, username=None):
         if not username:
             username = input("Enter the username to generate the token for: ")
     
-    resp = client.admin_initiate_auth(
-        UserPoolId=uid,
-        ClientId=app_client_id,
-        AuthFlow="ADMIN_USER_PASSWORD_AUTH", #TODO: Support more AuthFlows
-        AuthParameters={
-            "USERNAME": username,
-            "PASSWORD": getpass.getpass(
-                prompt=f"enter the password for {username} to generate the auth token: "),
-        },
-    )
+    if args.client_auth:
+        LOGGER.info("Using Client Auth")
+        resp = client.initiate_auth(
+            ClientId=app_client_id,
+            AuthFlow="USER_PASSWORD_AUTH", #TODO: Support more AuthFlows
+            AuthParameters={
+                "USERNAME": username,
+                "PASSWORD": getpass.getpass(
+                    prompt=f"enter the password for {username} to generate the auth token: "),
+            },
+        )
+    else:
+        LOGGER.info("Using server side auth")
+        resp = client.admin_initiate_auth(
+            UserPoolId=uid,
+            ClientId=app_client_id,
+            AuthFlow="ADMIN_USER_PASSWORD_AUTH", #TODO: Support more AuthFlows
+            AuthParameters={
+                "USERNAME": username,
+                "PASSWORD": getpass.getpass(
+                    prompt=f"enter the password for {username} to generate the auth token: "),
+            },
+        )
+
     _check_missing_field(resp, "ResponseMetadata")
     _validate_field(resp["ResponseMetadata"], "HTTPStatusCode", 200)
     
