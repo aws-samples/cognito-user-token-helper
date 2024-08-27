@@ -92,11 +92,11 @@ Please enter the password for the user to be created:
 #### Generate Token from Cognito 
 The command below generates a token for a user
 
-NOTE: You need to specify the `--client-id` for this to work. 
-
-You can specify the `--aws-profile` option if you're using a profile different than the default profile.
-
-The script also supports authentication via environment variables like "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY" and "AWS_SESSION_TOKEN". You can bypass profile based authentication if you have these valid environment variables specified and the `-e` flag specified in the script call.
+NOTE: 
+* You need to specify the `--client-id` for this to work. 
+* By default, it will run the [adimin_initiate_auth](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cognito-idp/client/admin_initiate_auth.html) API call for server side authentication. If you'd like to run client side authentication (i.e. [inititate_auth](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cognito-idp/client/initiate_auth.html)), make sure to specify the `--client-auth` flag. 
+* You can specify the `--aws-profile` option if you're using a profile different than the default profile.
+* The script also supports authentication via environment variables like "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY" and "AWS_SESSION_TOKEN". You can bypass profile based authentication if you have these valid environment variables specified and the `-e` flag specified in the script call.
 ```
 python cognito-user-token-helper.py -a generate-token \
                                     --user-pool-id <COGNITO_ USER_POOL_ID> \
